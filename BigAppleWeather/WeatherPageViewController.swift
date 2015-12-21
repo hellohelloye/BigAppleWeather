@@ -44,7 +44,7 @@ class WeatherPageViewController: UIPageViewController, UIPageViewControllerDataS
     // MARK: UIPageViewControllerDataSource & UIPageViewControllerDelegate
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
-        if let currentPageViewController = viewController as? SinglePageViewController, currentDayWeather:DaysInfo = currentPageViewController.dayWeatherInfo {
+        if let currentPageViewController = viewController as? SinglePageViewController, currentDayWeather:PageData = currentPageViewController.dayWeatherInfo {
             let currentIndex = dataController.indexOfWeatherData(currentDayWeather)
             return viewControllerAtIndex(currentIndex - 1)
         }
@@ -52,7 +52,7 @@ class WeatherPageViewController: UIPageViewController, UIPageViewControllerDataS
     }
     
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
-        if let currentPageViewController = viewController as? SinglePageViewController, currentDayWeather:DaysInfo = currentPageViewController.dayWeatherInfo {
+        if let currentPageViewController = viewController as? SinglePageViewController, currentDayWeather:PageData = currentPageViewController.dayWeatherInfo {
             let currentIndex = dataController.indexOfWeatherData(currentDayWeather)
             return viewControllerAtIndex(currentIndex + 1)
         }
