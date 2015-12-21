@@ -37,7 +37,7 @@ class WeatherDataController {
                         }
                        
                         //Algorithm for caculating the entire day's high and low temperature.
-                        self.createHighLowWeatherPage(self.dataHelper)
+                        self.createHighLowWeatherPage(self.dataHelper, uniqueDaysArray: self.uniqueDays(self.dataHelper))
                         
                         print("day weather: \(self.dataObjects)")
                     }
@@ -63,47 +63,48 @@ class WeatherDataController {
     //My Algorithm to showing one screen *per day* with the high and low temperature for the Entire day,
     // NOT one screen for every temperature entry in the feed.
     
-    func createHighLowWeatherPage(arrayWeathers: NSArray) {
-        let day1 = NSMutableArray()
-        let day2 = NSMutableArray()
-        let day3 = NSMutableArray()
-        let day4 = NSMutableArray()
-        let day5 = NSMutableArray()
-        let day6 = NSMutableArray()
+    func createHighLowWeatherPage(arrayWeathers: NSArray, uniqueDaysArray: NSArray) {
+        let daysArray = NSMutableArray()
         
-        for object in arrayWeathers  {
+        for dayString in uniqueDaysArray {
+            for object in arrayWeathers  {
+                let weather = object as! DaysInfo
+                let weatherTime: NSString = weather.dt_txt! as NSString
+                print(weatherTime)
+                let dayValue = weatherTime.substringWithRange(NSRange(location: 0, length: 10))
+                print(dayValue)
+                
+                if dayValue == dayString as! String {
+                    daysArray.addObject(weather)
+                }
+            }
+            
+            self.dataObjects.addObject( self.generateNewPage(daysArray) )
+        }
+    }
+    
+    func uniqueDays(weatherArray: NSArray) -> NSArray {
+        let daysArray = NSMutableArray()
+        for object in weatherArray  {
             let weather = object as! DaysInfo
             let weatherTime: NSString = weather.dt_txt! as NSString
             print(weatherTime)
             let dayValue = weatherTime.substringWithRange(NSRange(location: 0, length: 10))
             print(dayValue)
             
-            if dayValue == "2015-12-04" {
-                day1.addObject(weather)
-                
-            } else if dayValue == "2015-12-05" {
-                day2.addObject(weather)
-                
-            } else if dayValue == "2015-12-06" {
-                day3.addObject(weather)
-                
-            } else if dayValue == "2015-12-07" {
-                day4.addObject(weather)
-                
-            } else if dayValue == "2015-12-08" {
-                day5.addObject(weather)
-                
-            } else if dayValue == "2015-12-09" {
-                day6.addObject(weather)
+            daysArray.addObject(dayValue);
+        }
+
+        let unique = NSMutableArray()
+        let processedSet = NSMutableSet()
+        for object in daysArray {
+            if (!processedSet.containsObject(object)) {
+                unique.addObject(object)
+                processedSet.addObject(object)
             }
         }
         
-        self.dataObjects.addObject( self.generateNewPage(day1) )
-        self.dataObjects.addObject( self.generateNewPage(day2) )
-        self.dataObjects.addObject( self.generateNewPage(day3) )
-        self.dataObjects.addObject( self.generateNewPage(day4) )
-        self.dataObjects.addObject( self.generateNewPage(day5) )
-        self.dataObjects.addObject( self.generateNewPage(day6) )
+        return unique
     }
     
     func generateNewPage(daysArray: NSArray) -> PageData {
